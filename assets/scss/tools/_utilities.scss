@@ -3,62 +3,6 @@
         display: none;
     }
 
-    &-flex-row {
-        flex-direction: row;
-    }
-
-    &-align-start {
-        align-items: flex-start;
-    }
-
-    &-align-stretch {
-        align-items: stretch;
-    }
-
-    &-align-center {
-        align-items: center;
-    }
-
-    &-align-end {
-        align-items: flex-end;
-    }
-
-    &-align-self-start {
-        align-self: flex-start;
-    }
-
-    &-align-self-stretch {
-        align-self: stretch;
-    }
-
-    &-align-self-center {
-        align-self: center;
-    }
-
-    &-align-self-end {
-        align-self: flex-end;
-    }
-
-    &-justify-start {
-        justify-content: flex-start;
-    }
-
-    &-justify-center {
-        justify-content: center;
-    }
-
-    &-justify-end {
-        justify-content: flex-end;
-    }
-
-    &-space-between {
-        justify-content: space-between;
-    }
-
-    &-space-around {
-        justify-content: space-around;
-    }
-
     &-hidden {
         display: none;
     }
