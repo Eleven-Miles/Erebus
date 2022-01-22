@@ -1,5 +1,5 @@
 {
-  "name": "nanosoup/erebus",
+  "name": "tj-digital/erebus",
   "description": "A starter theme for Wordpress sites built with Mimir",
   "type": "wordpress-theme",
   "require": {
@@ -9,12 +9,8 @@
   "license": "Unlicense",
   "authors": [
     {
-      "name": "Jez Emery",
-      "email": "github@hiohzo.com"
-    },
-    {
-      "name": "Harry Wiseman",
-      "email": "enquiries@harry-wiseman.co.uk"
+      "name": "TJ Digital",
+      "email": "dev@thinkingjuice.co.uk"
     }
   ],
   "autoload": {
