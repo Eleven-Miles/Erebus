@@ -117,6 +117,31 @@
     }
 }
 
+$colors-list: (
+    'white': $white,
+    'black': $black,
+);
+
+$class-list: (
+    'bg': 'background-color',
+    'text': 'color',
+    'svg': 'fill'
+);
+
+@each $key, $val in $colors-list {
+    @each $class, $property in $class-list {
+        @if $class == 'svg' {
+            .u-#{$class}--#{$key} svg path {
+                #{$property}: #{$val};
+            }
+        } @else {
+            .u-#{$class}--#{$key} {
+                #{$property}: #{$val};
+            }
+        }
+    }
+}
+
 .screen-reader-text {
     @include visually-hidden();
 }
