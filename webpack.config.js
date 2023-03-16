@@ -11,14 +11,22 @@ const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const WebpackBar = require('webpackbar');
 const Dotenv = require('dotenv-webpack');
 
-const buildPath = '/wp-content/themes/erebus/public/dist/';
+// Theme name for build path
+const buildPath = '/wp-content/themes/{{ SITE_NAMESPACE }}/public/dist/';
 
 module.exports = (env, argv) => {
     const devMode = argv.mode === 'development';
 
     const args = {
+        watchOptions: {
+            aggregateTimeout: 200,
+            poll: 1000,
+        },
         entry: {
-            app: './assets/javascript/app.js',
+            app: [
+                './assets/javascript/app.js',
+                './assets/stylesheets/style.scss',
+            ],
             editor: './assets/javascript/editor.js',
         },
         output: {

@@ -3,6 +3,9 @@
 namespace {{ SITE_NAMESPACE }};
 
 use NanoSoup\Zeus\Kernel as KernelBase;
+use {{ SITE_NAMESPACE }}\ACF\ACF;
+use {{ SITE_NAMESPACE }}\WordPress\Images;
+use {{ SITE_NAMESPACE }}\WordPress\Twig;
 
 
 class Kernel extends KernelBase
@@ -19,7 +22,7 @@ class Kernel extends KernelBase
     public function registerClasses()
     {
         return [
-
+            new ACF(),
         ];
     }
 }
