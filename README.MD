@@ -25,3 +25,36 @@ $testimonials = new \{{ SITE_NAMESPACE }}\ACF\Blocks\Testimonials();
 $testimonials->init();
 ```
 You will then be able to select and use the Testimonials block within the Gutenberg editor
+
+# Description
+
+-   What:
+-   When: 
+-   Where:
+    - UAT: [](), 
+    - Production: []()
+-   Multsite:
+-   Tech:
+
+# Setup
+
+## Prerequisites
+
+-   Follow the instructions in the wiki [here]([https://bitbucket.org/strawberrysoup/tj-digital/wiki/Computer%20setup)
+
+## Initial Setup
+
+-   Some of these instructions may still be relevant [here]([https://bitbucket.org/strawberrysoup/tj-digital/wiki/Project%20Setup)
+-   run `yarn install` in root directory
+
+## Running the Project
+
+Run `composer install` in the project root, then switch down into the project theme `wp-content/themes/theme_name` and run `yarn install`.
+
+# Updates and Testing
+
+## Testing
+
+# Hosting and Deploying
+
+## Paid Plugins
