@@ -24,10 +24,10 @@ module.exports = (env, argv) => {
         },
         entry: {
             app: [
-                './assets/javascript/app.js',
+                './assets/js/app.js',
                 './assets/stylesheets/style.scss',
             ],
-            editor: './assets/javascript/editor.js',
+            editor: './assets/js/editor.js',
         },
         output: {
             filename: devMode ? '[name].js' : '[name].[contenthash].min.js',
