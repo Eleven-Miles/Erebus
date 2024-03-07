@@ -3,49 +3,67 @@ const webpack = require('webpack');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const globImporter = require('node-sass-glob-importer');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
-const ManifestPlugin = require('webpack-manifest-plugin');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const WebpackBar = require('webpackbar');
+const Dotenv = require('dotenv-webpack');
+
+// Theme name for build path
+const buildPath = '/wp-content/themes/{{ SITE_NAMESPACE }}/public/dist/';
 
 module.exports = (env, argv) => {
     const devMode = argv.mode === 'development';
 
-    return {
+    const args = {
+        watchOptions: {
+            aggregateTimeout: 200,
+            poll: 1000,
+        },
         entry: {
-            main: ['./assets/js/main.js'],
-            style: ['./assets/scss/style.scss'],
-            editor: [
-                './assets/scss/editor-style.scss',
-                './assets/js/editor.js'
-            ]
+            app: [
+                './assets/javascript/app.js',
+                './assets/stylesheets/style.scss',
+            ],
+            editor: './assets/javascript/editor.js',
         },
         output: {
-            filename: devMode ? '[name].js' : '[name].[hash].min.js',
-            path: path.resolve(__dirname, './public/dist/')
+            filename: devMode ? '[name].js' : '[name].[contenthash].min.js',
+            chunkFilename: devMode ? '[name].js' : '[name].[chunkhash].js',
+            path: path.resolve(__dirname, './public/dist/'),
+            publicPath: buildPath,
         },
-        devtool: 'source-maps',
+        devtool: 'source-map',
         module: {
             rules: [
                 {
-                    test: /\.js$/,
+                    test: /\.jsx?$/,
                     exclude: /node_modules/,
                     use: {
                         loader: 'babel-loader',
                         options: {
                             presets: [
-                                ['@babel/preset-env']
+                                [
+                                    '@babel/preset-env',
+                                    {
+                                        targets: {
+                                            node: 'current',
+                                        },
+                                    },
+                                ],
+                                '@babel/preset-react',
                             ],
                             plugins: [
                                 '@babel/plugin-proposal-export-default-from',
-                                '@babel/plugin-proposal-class-properties'
-                            ]
-                        }
-                    }
+                                '@babel/plugin-proposal-class-properties',
+                            ],
+                        },
+                    },
+                    resolve: {
+                        extensions: ['.js', '.jsx'],
+                    },
                 },
                 {
                     test: /\.s?css$/,
@@ -53,121 +71,98 @@ module.exports = (env, argv) => {
                         MiniCssExtractPlugin.loader,
                         {
                             loader: 'css-loader',
-                            options: { sourceMap: true }
+                            options: { sourceMap: true },
                         },
                         {
                             loader: 'postcss-loader',
-                            options: { sourceMap: true }
+                            options: { sourceMap: true },
                         },
                         { loader: 'resolve-url-loader' },
                         {
                             loader: 'sass-loader',
                             options: {
                                 sourceMap: true,
-                                importer: globImporter()
-                            }
-                        }
-                    ]
+                                sassOptions: {
+                                    importer: globImporter(),
+                                },
+                            },
+                        },
+                    ],
                 },
                 {
-                    test: /\.(png|jpg|gif)$/,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                outputPath: 'images/',
-                                name: '[name].[ext]'
-                            }
-                        }
-                    ]
+                    test: /\.(png|jpe?g|gif|webp)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: './images/[name][ext]',
+                    },
                 },
                 {
                     test: /\.(svg)$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: './svgs/[name][ext]',
+                    },
                     use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                outputPath: 'svgs/',
-                                name: '[name].[ext]'
-                            }
-                        },
                         {
                             loader: 'svgo-loader',
                             options: {
                                 plugins: [
-                                    { removeTitle: true },
-                                    { convertColors: { shorthex: false } },
-                                    { convertPathData: false },
-                                    { removeViewBox: false }
-                                ]
-                            }
-                        }
-                    ]
+                                    { name: 'removeTitle' },
+                                    { name: 'convertColors', params: { shorthex: false } },
+                                    { name: 'convertPathData' },
+                                ],
+                            },
+                        },
+                    ],
                 },
                 {
                     test: /\.(woff(2)?|ttf|eot)$/,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                outputPath: 'fonts/',
-                                name: '[name].[ext]'
-                            }
-                        }
-                    ]
-                }
-            ]
+                    type: 'asset/resource',
+                    generator: {
+                        filename: './fonts/[name][ext]',
+                    },
+                },
+            ],
         },
-        optimization: {
+        externals: {
+            jquery: 'jQuery',
+        },
+        plugins: [
+            new CleanWebpackPlugin(),
+            new RemoveEmptyScriptsPlugin(),
+            new MiniCssExtractPlugin({
+                filename: devMode ? '[name].css' : '[name].[contenthash].min.css',
+                chunkFilename: devMode ? '[id].css' : '[id].[contenthash].min.css',
+            }),
+            new ImageminPlugin({
+                test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                cacheFolder: './imgcache',
+            }),
+            new WebpackManifestPlugin(),
+            new webpack.ProvidePlugin({
+                $: 'jquery',
+                jQuery: 'jquery',
+                'window.jQuery': 'jquery',
+            }),
+            new WebpackBar(),
+            new Dotenv({
+                path: '../../../.env.webpack',
+                systemvars: true,
+            }),
+        ],
+    };
+
+    if (!devMode) {
+        args.optimization = {
             minimize: true,
             minimizer: [
                 new TerserPlugin({
                     parallel: true,
-                    terserOptions: { output: { comments: false } }
-                })
-            ]
-        },
-        plugins: [
-            new CleanWebpackPlugin(),
-            new FixStyleOnlyEntriesPlugin(),
-            new MiniCssExtractPlugin({
-                filename: devMode ? '[name].css' : '[name].[hash].min.css',
-                chunkFilename: devMode ? '[id].css' : '[id].[hash].min.css'
-            }),
-            new ImageminPlugin({
-                test: /\.(jpg|png|gif)$/i,
-                cacheFolder: './imgcache'
-            }),
-            new ManifestPlugin(),
-            new webpack.ProvidePlugin({
-                $: 'jquery',
-                jQuery: 'jquery',
-                'window.jQuery': 'jquery'
-            }),
-            new BrowserSyncPlugin(
-                {
-                    // browse to http://localhost:3000/ during development
-                    host: 'localhost',
-                    port: 3000,
-                    // proxy the Webpack Dev Server endpoint
-                    // through BrowserSync via php server
-                    proxy: 'http://localhost:8080/',
-                    notify: true,
-                    injectCss: true,
-                    files: ['./public/dist/*.css'],
-                    open: false
-                },
-                {
-                    // prevent BrowserSync from reloading the page
-                    // and let Webpack Dev Server take care of this
-                    reload: false
-                }
-            ),
-            new Dotenv({
-                path: '../../../.env',
-                systemvars: true
-            }),
-            new WebpackBar()
-        ]
-    };
+                    terserOptions: { output: { comments: false } },
+                }),
+            ],
+        };
+    }
+
+    return args;
 };
