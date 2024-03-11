@@ -1,7 +1,6 @@
 <?php
 
 use Timber\Timber;
-use \Timber\Post;
 
 $postType = get_query_var('post_type');
 $postName = get_query_var('name');
@@ -14,9 +13,9 @@ if ('products' == $postType && !empty($postName)) {
     }
 }
 
-$context = Timber::get_context();
+$context = Timber::context();
 $errorPage = get_page_by_title('404')->ID;
-$post = new Post($errorPage);
+$post = Timber::get_post($errorPage);
 $context['post'] = $post;
 
 Timber::render(['views/404.twig'], $context);

@@ -1,3 +1,6 @@
+// Import SCSS files
+import '../stylesheets/style.scss';
+
 // Import static files to ensure webpack loads them correctly
 import '../images';
 

@@ -7,33 +7,21 @@ const globImporter = require('node-sass-glob-importer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
-const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const WebpackBar = require('webpackbar');
 const Dotenv = require('dotenv-webpack');
-
-// Theme name for build path
-const buildPath = '/wp-content/themes/{{ SITE_NAMESPACE }}/public/dist/';
 
 module.exports = (env, argv) => {
     const devMode = argv.mode === 'development';
 
     const args = {
-        watchOptions: {
-            aggregateTimeout: 200,
-            poll: 1000,
-        },
         entry: {
-            app: [
-                './assets/javascript/app.js',
-                './assets/stylesheets/style.scss',
-            ],
-            editor: './assets/javascript/editor.js',
+            app: path.resolve(__dirname, './assets/javascript/app.js'),
+            editor: path.resolve(__dirname, './assets/javascript/editor.js'),
         },
         output: {
             filename: devMode ? '[name].js' : '[name].[contenthash].min.js',
             chunkFilename: devMode ? '[name].js' : '[name].[chunkhash].js',
             path: path.resolve(__dirname, './public/dist/'),
-            publicPath: buildPath,
         },
         devtool: 'source-map',
         module: {
@@ -108,7 +96,10 @@ module.exports = (env, argv) => {
                             options: {
                                 plugins: [
                                     { name: 'removeTitle' },
-                                    { name: 'convertColors', params: { shorthex: false } },
+                                    {
+                                        name: 'convertColors',
+                                        params: { shorthex: false },
+                                    },
                                     { name: 'convertPathData' },
                                 ],
                             },
@@ -129,16 +120,21 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new CleanWebpackPlugin(),
-            new RemoveEmptyScriptsPlugin(),
             new MiniCssExtractPlugin({
-                filename: devMode ? '[name].css' : '[name].[contenthash].min.css',
-                chunkFilename: devMode ? '[id].css' : '[id].[contenthash].min.css',
+                filename: devMode
+                    ? '[name].css'
+                    : '[name].[contenthash].min.css',
+                chunkFilename: devMode
+                    ? '[id].css'
+                    : '[id].[contenthash].min.css',
             }),
             new ImageminPlugin({
                 test: /\.(png|jpe?g|gif|svg|webp)$/i,
                 cacheFolder: './imgcache',
             }),
-            new WebpackManifestPlugin(),
+            new WebpackManifestPlugin({
+                publicPath: '',
+            }),
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery',

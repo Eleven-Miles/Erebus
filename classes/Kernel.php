@@ -7,7 +7,6 @@ use {{ SITE_NAMESPACE }}\ACF\ACF;
 use {{ SITE_NAMESPACE }}\WordPress\Images;
 use {{ SITE_NAMESPACE }}\WordPress\Twig;
 
-
 class Kernel extends KernelBase
 {
     public function __construct()
