@@ -1,10 +1,10 @@
-<img 
-     src="{{ Image(imgID).src(imgSize ~ '-desktop') }}" 
-     data-srcset="{{ Image(imgID).src(imgSize ~ '-mobile') }} 360w, 
-     {{ Image(imgID).src(imgSize ~ '-tablet') }} 768w, 
-     {{ Image(imgID).src(imgSize ~ '-desktop') }} 1440w, 
-     {{ Image(imgID).src(imgSize ~ '-jumbo') }} 2000w"
-     width="{{ Image(imgID).width }}"
-     height="{{ Image(imgID).height }}"
-     alt="{{Image(imgID).alt}}"
+<img
+     src="{{ get_image(imgID).src(imgSize ~ '-desktop') }}"
+     data-srcset="{{ get_image(imgID).src(imgSize ~ '-mobile') }} 360w,
+     {{ get_image(imgID).src(imgSize ~ '-tablet') }} 768w,
+     {{ get_image(imgID).src(imgSize ~ '-desktop') }} 1440w,
+     {{ get_image(imgID).src(imgSize ~ '-jumbo') }} 2000w"
+     width="{{ get_image(imgID).width }}"
+     height="{{ get_image(imgID).height }}"
+     alt="{{get_image(imgID).alt}}"
 />

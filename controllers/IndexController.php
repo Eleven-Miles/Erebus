@@ -19,7 +19,7 @@ class IndexController
      */
     public static function indexAction()
     {
-        $context = Timber::get_context();
+        $context = Timber::context();
 
         $context['page'] = \Timber\Helper::transient('page', function () {
             $posts = Timber::get_posts();
@@ -34,5 +34,4 @@ class IndexController
             'context' => $context
         ];
     }
-
 }
